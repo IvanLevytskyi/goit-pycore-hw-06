@@ -42,11 +42,15 @@ class Record:
     def edit_phone(self, old_number, new_number):
         phone = self.find_phone(old_number)
 
-        if phone:
-            self.phones.remove(phone)
-            self.add_phone(new_number)
-        else:
+        if not phone:
             raise ValueError(f"Phone number {old_number} not found")
+
+        # Validate the new phone number
+        if not Phone.validate_phone(new_number):
+            raise ValueError("New phone number must contain exactly 10 digits")
+
+        # Update the phone number
+        phone.value = new_number
 
     def find_phone(self, phone_number):
         for phone in self.phones:
@@ -88,24 +92,8 @@ john_record.add_phone("5555555555")
 # Add John's record to the address book
 book.add_record(john_record)
 
-# Create and add a new record for Jane
-jane_record = Record("Jane")
-jane_record.add_phone("9876543210")
-book.add_record(jane_record)
+# Print John's record
+print(john_record)
 
-# Print all records in the address book
-for name, record in book.data.items():
-    print(record)
-
-# Find and edit John's phone number
-john = book.find("John")
-john.edit_phone("1234567890", "1112223333")
-
-print(john)
-
-# Find a specific phone number in John's record
-found_phone = john.find_phone("5555555555")
-print(f"{john.name}: {found_phone}")
-
-# Delete Jane's record
-book.delete("Jane")
+# Check validation error
+john_record.add_phone("12345")
